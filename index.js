@@ -75,7 +75,6 @@ app.delete("/memories/:id", (req, res) => {
         return res.json('memories deleted successfully!')
     })
 })
-
 // update memory
 app.put("/memories/:id", (req, res) => {
     const memoryId = req.params.id;
@@ -94,6 +93,9 @@ app.put("/memories/:id", (req, res) => {
         return res.json('memories updated successfully!')
     })
 })
+// ------------------------------------------------
+
+
 
 app.listen(8800, () => {
     console.log('Connect to backend !')
