@@ -23,7 +23,8 @@ app.get("/", (req, res) => {
 })
 
 
-// QUERY FOR MEMORIES --->
+// QUERY FOR MEMORIES ----------------------------
+// get all
 app.get("/memories", (req, res) => {
     const q = "SELECT * FROM memories"
     db.query(q, (err, data) => {
@@ -32,6 +33,18 @@ app.get("/memories", (req, res) => {
     })
 })
 
+// get memory by id
+app.get("/memories/:id", (req, res) => {
+    const memoryId = req.params.id;
+    const q = "SELECT * FROM memories WHERE m_id = ?"
+    db.query(q,memoryId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+
+// add memory
 app.post("/memories", (req, res) => {
     const q = "INSERT INTO memories (`m_id`, `u_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
 
@@ -46,7 +59,39 @@ app.post("/memories", (req, res) => {
 
     db.query(q, [values], (err, data) => {
         if (err) return res.json(err)
+        if (data) console.log('Memory added')
         return res.json('memories added successfully!')
+    })
+})
+
+// delete memory
+app.delete("/memories/:id", (req, res) => {
+    const memoryId = req.params.id;
+    const q = "DELETE FROM memories WHERE m_id = ?"
+
+    db.query(q, memoryId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Memory deleted.')
+        return res.json('memories deleted successfully!')
+    })
+})
+
+// update memory
+app.put("/memories/:id", (req, res) => {
+    const memoryId = req.params.id;
+    const q = "UPDATE books SET `title`=?, `details`=?, `img_url`=?, `created_date`= ? WHERE id = ?";
+
+    const values = [
+        req.body.title,
+        req.body.details,
+        req.body.img_URL,
+        req.body.created_date,
+    ]
+
+    db.query(q, [...values, memoryId], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Memory Updated.')
+        return res.json('memories updated successfully!')
     })
 })
 
