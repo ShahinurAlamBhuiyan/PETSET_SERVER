@@ -16,6 +16,8 @@ const db = mysql.createConnection({
     database: `${process.env.db_name}`
 })
 
+app.use(express.json())
+
 app.get("/", (req, res) => {
     res.json("hello this is the backend!")
 })
@@ -27,6 +29,24 @@ app.get("/memories", (req, res) => {
     db.query(q, (err, data) => {
         if (err) return res.json(err)
         return res.json(data)
+    })
+})
+
+app.post("/memories", (req, res) => {
+    const q = "INSERT INTO memories (`m_id`, `u_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
+
+    const values = [
+        req.body.m_id,
+        req.body.u_id,
+        req.body.title,
+        req.body.details,
+        req.body.img_URL,
+        req.body.created_date,
+    ]
+
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err)
+        return res.json('memories added successfully!')
     })
 })
 
