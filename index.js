@@ -21,7 +21,7 @@ const db = mysql.createConnection({
 app.use(express.json())
 
 app.get("/", (req, res) => {
-    res.json("hello this is the backend!")
+    res.json("Welcome to backend!")
 })
 
 // QUERY FOR  AUTHENTICATION ----------------------------------------
@@ -115,7 +115,6 @@ app.post('/sign-in', async (req, res) => {
 // -------------------------------------------------------------------
 
 
-
 // QUERY FOR MEMORIES --------------------------------------------------------
 // get all
 app.get("/memories", (req, res) => {
@@ -195,7 +194,7 @@ app.get("/services", (req, res) => {
     })
 })
 
-// // get memory by id
+// // get service by id
 app.get("/services/:id", (req, res) => {
     const serviceID = req.params.id;
     const q = "SELECT services.s_id, services.title, services.details, animalspecialist.dr_name, animalspecialist.dr_email, animalspecialist.dr_contact, animalspecialist.specialise, animalspecialist.experience_yr, animalspecialist.visiting_fees, animalspecialist.dr_address FROM services JOIN animalspecialist ON services.dr_id = animalspecialist.dr_id WHERE services.s_id = ?"
@@ -259,7 +258,7 @@ app.get("/services/:id", (req, res) => {
 //     })
 // })
 // ----------------------------------------------------------------------------
-
+// ----------------------------------------------------------------------------
 
 
 app.listen(8800, () => {
