@@ -75,6 +75,47 @@ app.post('/sign-up', async (req, res) => {
     }
 });
 
+// sign-in
+app.post('/sign-in', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      // Retrieve user from the database based on the email
+      const q = 'SELECT * FROM user WHERE email = ?';
+      db.query(q, [email], async (error, results, fields) => {
+        if (error) {
+          console.error(error);
+          res.status(500).send('Error retrieving user data');
+          return;
+        }
+  
+        // Check if the user exists
+        if (results.length === 0) {
+          res.status(404).send('User not found');
+          return;
+        }
+  
+        const user = results[0];
+  
+        // Compare the entered password with the hashed password in the database
+        const passwordMatch = await bcrypt.compare(password, user.password);
+  
+        if (passwordMatch) {
+          // Passwords match - user authenticated
+          console.log('User authenticated successfully')
+          res.status(200).send('User authenticated successfully');
+        } else {
+          // Passwords do not match - authentication failed
+          res.status(401).send('Invalid credentials');
+        }
+      });
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).send('Error during sign-in');
+    }
+  });
+  
+
 
 
 // QUERY FOR MEMORIES ----------------------------
