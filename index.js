@@ -105,6 +105,7 @@ app.post('/sign-in', async (req, res) => {
             } else {
                 // Passwords do not match - authentication failed
                 res.status(401).send('Invalid credentials');
+                return
             }
         });
     } catch (error) {
