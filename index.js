@@ -2,6 +2,8 @@ import express from 'express'
 import mysql from 'mysql'
 import cors from 'cors'
 import { configDotenv } from "dotenv";
+import { v4 as uuidv4 } from 'uuid';
+import bcrypt from 'bcrypt'
 
 configDotenv('dotenv');
 
@@ -22,6 +24,58 @@ app.get("/", (req, res) => {
     res.json("hello this is the backend!")
 })
 
+// QUERY FOR  AUTHENTICATION
+
+// sign-up
+app.post('/sign-up', async (req, res) => {
+    try {
+        // Check if the email already exists
+        const checkEmailQuery = 'SELECT * FROM user WHERE email = ?';
+        db.query(checkEmailQuery, [req.body.email], async (error, results, fields) => {
+            if (error) {
+                console.error(error);
+                res.status(500).send('Error checking email availability');
+                return;
+            }
+
+            if (results.length > 0) {
+                // Email already exists, return an error response
+                res.status(400).send('Email is already in use');
+                return;
+            }
+
+            // Proceed with user registration
+            const u_id = uuidv4(); // Generate a unique ID
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            const insertUserQuery =
+                'INSERT INTO user (`u_id`, `email`, `full_name`, `image_URL`, `role`, `password`) VALUES (?)';
+
+            const values = [
+                u_id,
+                req.body.email,
+                req.body.firstName + " " + req.body.lastName,
+                req.body.image_URL,
+                req.body.role,
+                hashedPassword, // Use the hashed password
+            ];
+
+            db.query(insertUserQuery, [values], (insertError, insertResults, insertFields) => {
+                if (insertError) {
+                    console.error(insertError);
+                    res.status(500).send('Error storing user data');
+                } else {
+                    console.log('User data stored successfully');
+                    res.status(200).send('User data stored successfully');
+                }
+            });
+        });
+    } catch (error) {
+        console.error('Error:', error);
+        res.status(500).send('Error storing user data');
+    }
+});
+
+
 
 // QUERY FOR MEMORIES ----------------------------
 // get all
@@ -37,7 +91,7 @@ app.get("/memories", (req, res) => {
 app.get("/memories/:id", (req, res) => {
     const memoryId = req.params.id;
     const q = "SELECT * FROM memories WHERE m_id = ?"
-    db.query(q,memoryId, (err, data) => {
+    db.query(q, memoryId, (err, data) => {
         if (err) return res.json(err)
         return res.json(data)
     })
