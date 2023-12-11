@@ -308,6 +308,19 @@ app.post('/appointment', (req, res) => {
     })
 })
 
+
+// STORE QUERY ------------------------------------
+// Get product by type name
+app.get('/product', (req, res) => {
+    const q = 'SELECT * FROM petfoodmedistore WHERE product_type = ?';
+    const productType = req.query.product_type;
+
+    db.query(q, [productType], (err, data) => {
+        if (err) return res.json(err);
+        return res.json(data);
+    });
+});
+
 app.listen(8800, () => {
     console.log('Connect to backend !')
 })
