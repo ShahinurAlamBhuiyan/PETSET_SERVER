@@ -195,10 +195,21 @@ app.get("/services", (req, res) => {
     })
 })
 
-// // get service by id
+// get single service
+app.get("/service/:id", (req, res) => {
+    const serviceId = req.params.id;
+    const q = "SELECT * FROM services WHERE s_id = ?"
+    db.query(q, serviceId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+
+// // get service and doctor by id
 app.get("/services/:id", (req, res) => {
     const serviceID = req.params.id;
-    const q = "SELECT services.s_id, services.title, services.details, animalspecialist.dr_name, animalspecialist.dr_email, animalspecialist.dr_contact, animalspecialist.specialise, animalspecialist.experience_yr, animalspecialist.visiting_fees, animalspecialist.dr_address FROM services JOIN animalspecialist ON services.dr_id = animalspecialist.dr_id WHERE services.s_id = ?"
+    const q = "SELECT services.s_id, services.title, services.details,animalspecialist.dr_id, animalspecialist.dr_name, animalspecialist.dr_email, animalspecialist.dr_contact, animalspecialist.specialise, animalspecialist.experience_yr, animalspecialist.visiting_fees, animalspecialist.dr_address FROM services JOIN animalspecialist ON services.dr_id = animalspecialist.dr_id WHERE services.s_id = ?"
     // const q = "SELECT * FROM services WHERE m_id = ?"
     db.query(q, serviceID, (err, data) => {
         if (err) {
@@ -210,7 +221,7 @@ app.get("/services/:id", (req, res) => {
 })
 
 
-// // add memory
+// // add service
 // app.post("/memories", (req, res) => {
 //     const q = "INSERT INTO memories (`m_id`, `u_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
 
@@ -229,7 +240,7 @@ app.get("/services/:id", (req, res) => {
 //         return res.json('memories added successfully!')
 //     })
 // })
-// // delete memory
+// // delete service
 // app.delete("/memories/:id", (req, res) => {
 //     const memoryId = req.params.id;
 //     const q = "DELETE FROM memories WHERE m_id = ?"
@@ -261,6 +272,41 @@ app.get("/services/:id", (req, res) => {
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
+
+// DOCTOR APPOINTMENT
+// get doctor
+app.get("/doctor/:id", (req, res) => {
+    const doctorId = req.params.id;
+    const q = "SELECT * FROM animalspecialist WHERE dr_id = ?"
+    db.query(q, doctorId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+
+// book appointment
+app.post('/appointment', (req, res) => {
+    const q = "INSERT INTO appointment (`u_id`, `dr_id`, `a_id`, `appointment_date`, `s_id`, `owner_name`, `owner_email`, `contact`, `fees`) VALUES (?)"
+
+    const values = [
+        req.body.u_id,
+        req.body.dr_id,
+        req.body.a_id,
+        req.body.appointment_date,
+        req.body.s_id,
+        req.body.owner_name,
+        req.body.owner_email,
+        req.body.contact,
+        req.body.fee
+    ]
+
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Appointment added')
+        return res.json('Appointment added successfully!')
+    })
+})
 
 app.listen(8800, () => {
     console.log('Connect to backend !')
