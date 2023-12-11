@@ -321,6 +321,25 @@ app.get('/product', (req, res) => {
     });
 });
 
+
+// SEARCH PRODUCT
+app.get('/search', (req, res) => {
+    const searchQuery = req.query.query.toLowerCase();
+    const q = `
+      SELECT *
+      FROM petfoodmedistore
+      WHERE LOWER(product_name) LIKE ?
+         OR LOWER(product_description) LIKE ?
+    `;
+    const params = [`%${searchQuery}%`, `%${searchQuery}%`];
+
+    db.query(q, params, (err, results) => {
+        if (err) return res.json(err);
+        return res.json(results);
+    });
+});
+
+
 app.listen(8800, () => {
     console.log('Connect to backend !')
 })
