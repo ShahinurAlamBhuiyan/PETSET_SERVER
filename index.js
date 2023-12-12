@@ -14,7 +14,7 @@ app.use(cors())
 const db = mysql.createConnection({
     host: `${process.env.db_host}`,
     user: `${process.env.db_user}`,
-    password: '',
+    password: `${process.env.db_pass}`,
     database: `${process.env.db_name}`
 })
 
@@ -182,7 +182,7 @@ app.put("/memories/:id", (req, res) => {
         return res.json('memories updated successfully!')
     })
 })
-// ----------------------------------------------------------------------------
+// ---------------------------------------------------------------------------
 
 // QUERY FOR SERVICES --------------------------------------------------------
 // get all
