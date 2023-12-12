@@ -321,6 +321,16 @@ app.get('/product', (req, res) => {
     });
 });
 
+// Get product by id
+app.get("/product/:id", (req, res) => {
+    const productId = req.params.id;
+    const q = "SELECT * FROM petfoodmedistore WHERE product_id = ?"
+    db.query(q, productId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
 
 // SEARCH PRODUCT
 app.get('/search', (req, res) => {
