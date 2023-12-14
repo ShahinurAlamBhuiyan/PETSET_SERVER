@@ -24,7 +24,33 @@ app.get("/", (req, res) => {
     res.json("Welcome to backend!")
 })
 
-// QUERY FOR  AUTHENTICATION ----------------------------------------
+
+// QUERY FOR USERS ------------------------------------------
+// get all users
+app.get('/users', async (req, res) => {
+    const q = "SELECT * FROM user WHERE role='user'"
+    db.query(q, (error, results) => {
+        if (error) return res.json(error)
+        console.log(results)
+        return res.json(results)
+    })
+})
+
+// delete user
+app.post('/user/:id', async (req, res) => {
+    const userId = req.params.id;
+    const q = "DELETE FROM user WHERE u_id = ?"
+    db.query(q, userId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json('user deleted!')
+    })
+})
+
+
+
+// -----------------------------------------------------------
+
+// QUERY FOR  AUTHENTICATION ---------------------------------------
 // sign-up
 app.post('/sign-up', async (req, res) => {
     try {
