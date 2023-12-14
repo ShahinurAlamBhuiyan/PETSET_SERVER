@@ -245,6 +245,17 @@ app.get("/services/:id", (req, res) => {
     })
 })
 
+// get service by  doctor 
+app.get("/services/doctor/:id", (req, res) => {
+    const doctorID = req.params.id;
+    const q = "SELECT * FROM services WHERE dr_id = ?"
+    db.query(q, doctorID, (err, data) => {
+        if (err)return res.json(err)
+        
+        return res.json(data)
+    })
+})
+
 // add service for doctor
 app.post("/services", (req, res) => {
     const q = "INSERT INTO services (`dr_id`, `s_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
@@ -310,6 +321,18 @@ app.delete("/service/doctor/:service_id/:dr_id", (req, res) => {
     });
 });
 
+// Delete doctor by dr.id
+app.delete("/service/doctor/:id", (req, res) => {
+    const doctorId = req.params.id;
+    const q = "DELETE FROM services WHERE dr_id = ?"
+
+    db.query(q, doctorId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('service deleted.')
+        return res.json('service deleted successfully!')
+    })
+})
+
 // ----------------------------------------------------------------------------
 
 
@@ -331,6 +354,18 @@ app.get("/doctor/:id", (req, res) => {
     db.query(q, doctorId, (err, data) => {
         if (err) return res.json(err)
         return res.json(data)
+    })
+})
+
+// delete doctor
+app.delete("/doctor/:id", (req, res) => {
+    const doctorId = req.params.id;
+    const q = "DELETE FROM animalspecialist WHERE dr_id = ?"
+
+    db.query(q, doctorId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Doctor deleted.')
+        return res.json('doctor deleted successfully!')
     })
 })
 // ----------------------------------------------------------------------------
@@ -357,6 +392,18 @@ app.post('/appointment', (req, res) => {
         if (err) return res.json(err)
         if (data) console.log('Appointment added')
         return res.json('Appointment added successfully!')
+    })
+})
+
+// delete appointment by doctor id
+app.delete("/appointment/:id", (req, res) => {
+    const doctorId = req.params.id;
+    const q = "DELETE FROM appointment WHERE dr_id = ?"
+
+    db.query(q, doctorId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Doctor deleted.')
+        return res.json('doctor deleted successfully!')
     })
 })
 // ----------------------------------------------------------------------------
