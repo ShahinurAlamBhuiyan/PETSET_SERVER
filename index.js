@@ -37,7 +37,7 @@ app.get('/users', async (req, res) => {
 })
 
 // delete user
-app.post('/user/:id', async (req, res) => {
+app.delete('/user/:id', async (req, res) => {
     const userId = req.params.id;
     const q = "DELETE FROM user WHERE u_id = ?"
     db.query(q, userId, (err, data) => {
@@ -231,8 +231,7 @@ app.get("/service/:id", (req, res) => {
     })
 })
 
-
-// // get service and doctor by id
+// get service and doctor by id
 app.get("/services/:id", (req, res) => {
     const serviceID = req.params.id;
     const q = "SELECT services.s_id, services.title, services.details,animalspecialist.dr_id, animalspecialist.dr_name, animalspecialist.dr_email, animalspecialist.dr_contact, animalspecialist.specialise, animalspecialist.experience_yr, animalspecialist.visiting_fees, animalspecialist.dr_address FROM services JOIN animalspecialist ON services.dr_id = animalspecialist.dr_id WHERE services.s_id = ?"
@@ -246,6 +245,17 @@ app.get("/services/:id", (req, res) => {
     })
 })
 
+// delete service
+app.delete("/service/:id", (req, res) => {
+    const serviceId = req.params.id;
+    const q = "DELETE FROM services WHERE s_id = ?"
+
+    db.query(q, serviceId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('service deleted.')
+        return res.json('service deleted successfully!')
+    })
+})
 
 // // add service
 // app.post("/memories", (req, res) => {
@@ -266,17 +276,7 @@ app.get("/services/:id", (req, res) => {
 //         return res.json('memories added successfully!')
 //     })
 // })
-// // delete service
-// app.delete("/memories/:id", (req, res) => {
-//     const memoryId = req.params.id;
-//     const q = "DELETE FROM memories WHERE m_id = ?"
 
-//     db.query(q, memoryId, (err, data) => {
-//         if (err) return res.json(err)
-//         if (data) console.log('Memory deleted.')
-//         return res.json('memories deleted successfully!')
-//     })
-// })
 // // update memory
 // app.put("/memories/:id", (req, res) => {
 //     const memoryId = req.params.id;
