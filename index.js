@@ -310,6 +310,26 @@ app.get("/doctor/:id", (req, res) => {
     })
 })
 
+// Delete doctor from service
+app.delete("/service/doctor/:service_id/:dr_id", (req, res) => {
+    const serviceId = req.params.service_id;
+    const doctorId = req.params.dr_id;
+    // Delete from appointment table first
+    const qDeleteAppointments = "DELETE FROM appointment WHERE s_id = ? AND dr_id = ?";
+    db.query(qDeleteAppointments, [serviceId, doctorId], (err, result) => {
+        if (result) {
+            // Now, delete from services table
+            const qDeleteService = "DELETE FROM services WHERE s_id = ? AND dr_id = ?";
+            db.query(qDeleteService, [serviceId, doctorId], (err, results) => {
+                if (err) return res.json(err)
+                return res.json(results)
+            });
+        }
+    });
+});
+
+
+
 
 // book appointment
 app.post('/appointment', (req, res) => {
