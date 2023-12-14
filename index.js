@@ -357,6 +357,29 @@ app.get("/doctor/:id", (req, res) => {
     })
 })
 
+// add doctor
+app.post("/doctors", (req, res) => {
+    const q = "INSERT INTO animalspecialist (`dr_id`, `dr_name`, `specialise`, `experience_yr`, `dr_degrees`, `dr_address`, `visiting_fees`, `dr_contact`,`dr_email`) VALUES (?)"
+
+    const values = [
+        req.body.dr_id,
+        req.body.dr_name,
+        req.body.specialise,
+        req.body.experience_yr,
+        req.body.dr_degrees,
+        req.body.dr_address,
+        req.body.visiting_fees,
+        req.body.dr_contact,
+        req.body.dr_email,
+    ]
+
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Doctor added')
+        return res.json('doctor added successfully!')
+    })
+})
+
 // delete doctor
 app.delete("/doctor/:id", (req, res) => {
     const doctorId = req.params.id;
@@ -491,8 +514,6 @@ app.put("/product/:product_id", (req, res) => {
         return res.json('product updated successfully!');
     });
 });
-
-
 
 // delete product
 app.delete("/product/:id", (req, res) => {
