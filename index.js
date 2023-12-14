@@ -364,6 +364,7 @@ app.get('/products', (req, res) => {
         return res.json(data);
     });
 });
+
 // Get product by type name
 app.get('/product', (req, res) => {
     const q = 'SELECT * FROM petfoodmedistore WHERE product_type = ?';
@@ -382,6 +383,26 @@ app.get("/product/:id", (req, res) => {
     db.query(q, productId, (err, data) => {
         if (err) return res.json(err)
         return res.json(data)
+    })
+})
+
+// Add product
+app.post("/product", (req, res) => {
+    const q = "INSERT INTO petfoodmedistore (`product_id`, `product_type`, `product_name`, `product_price`, `product_description`, `product_image`) VALUES (?)"
+
+    const values = [
+        req.body.product_id,
+        req.body.product_type,
+        req.body.product_name,
+        req.body.product_price,
+        req.body.product_description,
+        req.body.product_image,
+    ]
+
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Product added')
+        return res.json('product added successfully!')
     })
 })
 
