@@ -31,7 +31,7 @@ app.get('/users', async (req, res) => {
     const q = "SELECT * FROM user WHERE role='user'"
     db.query(q, (error, results) => {
         if (error) return res.json(error)
-        console.log(results)
+        // console.log(results)
         return res.json(results)
     })
 })
@@ -39,9 +39,11 @@ app.get('/users', async (req, res) => {
 // delete user
 app.delete('/user/:id', async (req, res) => {
     const userId = req.params.id;
+    console.log(userId)
     const q = "DELETE FROM user WHERE u_id = ?"
     db.query(q, userId, (err, data) => {
         if (err) return res.json(err)
+        console.log('user deleted!')
         return res.json('user deleted!')
     })
 })
@@ -182,6 +184,17 @@ app.delete("/memories/:id", (req, res) => {
     const q = "DELETE FROM memories WHERE m_id = ?"
 
     db.query(q, memoryId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Memory deleted.')
+        return res.json('memories deleted successfully!')
+    })
+})
+// delete memory by u_id
+app.delete("/memories/user/:id", (req, res) => {
+    const userId = req.params.id;
+    const q = "DELETE FROM memories WHERE u_id = ?"
+
+    db.query(q, userId, (err, data) => {
         if (err) return res.json(err)
         if (data) console.log('Memory deleted.')
         return res.json('memories deleted successfully!')
@@ -427,6 +440,18 @@ app.delete("/appointment/:id", (req, res) => {
         if (err) return res.json(err)
         if (data) console.log('Doctor deleted.')
         return res.json('doctor deleted successfully!')
+    })
+})
+
+// delete appointment by user id
+app.delete("/appointment/user/:id", (req, res) => {
+    const userId = req.params.id;
+    const q = "DELETE FROM appointment WHERE u_id = ?"
+
+    db.query(q, userId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Doctor deleted.')
+        return res.json('appointment deleted successfully!')
     })
 })
 // ----------------------------------------------------------------------------
