@@ -315,7 +315,16 @@ app.delete("/service/doctor/:service_id/:dr_id", (req, res) => {
 
 
 // DOCTOR  QUERY ----------------------------------------------------
-// get doctor
+// Get all doctor
+app.get("/doctors", (req, res) => {
+    const q = 'SELECT * FROM animalspecialist'
+    db.query(q, (err, result) => {
+        if(err) return res.json(err)
+        return res.json(result)
+    })
+})
+
+// get doctor by id
 app.get("/doctor/:id", (req, res) => {
     const doctorId = req.params.id;
     const q = "SELECT * FROM animalspecialist WHERE dr_id = ?"
