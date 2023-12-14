@@ -386,6 +386,23 @@ app.get("/product/:id", (req, res) => {
     })
 })
 
+// SEARCH PRODUCT
+app.get('/search', (req, res) => {
+    const searchQuery = req.query.query.toLowerCase();
+    const q = `
+      SELECT *
+      FROM petfoodmedistore
+      WHERE LOWER(product_name) LIKE ?
+         OR LOWER(product_description) LIKE ?
+    `;
+    const params = [`%${searchQuery}%`, `%${searchQuery}%`];
+
+    db.query(q, params, (err, results) => {
+        if (err) return res.json(err);
+        return res.json(results);
+    });
+});
+
 // Add product
 app.post("/product", (req, res) => {
     const q = "INSERT INTO petfoodmedistore (`product_id`, `product_type`, `product_name`, `product_price`, `product_description`, `product_image`) VALUES (?)"
@@ -419,22 +436,19 @@ app.put("/product/:product_id", (req, res) => {
     });
 });
 
-// SEARCH PRODUCT
-app.get('/search', (req, res) => {
-    const searchQuery = req.query.query.toLowerCase();
-    const q = `
-      SELECT *
-      FROM petfoodmedistore
-      WHERE LOWER(product_name) LIKE ?
-         OR LOWER(product_description) LIKE ?
-    `;
-    const params = [`%${searchQuery}%`, `%${searchQuery}%`];
 
-    db.query(q, params, (err, results) => {
-        if (err) return res.json(err);
-        return res.json(results);
-    });
-});
+
+// delete product
+app.delete("/product/:id", (req, res) => {
+    const productId = req.params.id;
+    const q = "DELETE FROM petfoodmedistore WHERE product_id = ?"
+
+    db.query(q, productId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Product deleted.')
+        return res.json('product deleted successfully!')
+    })
+})
 // ----------------------------------------------------------------------------
 
 app.listen(8800, () => {
