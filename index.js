@@ -257,25 +257,61 @@ app.delete("/service/:id", (req, res) => {
     })
 })
 
-// // add service
-// app.post("/memories", (req, res) => {
-//     const q = "INSERT INTO memories (`m_id`, `u_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
+// Update service title, details
+app.put("/services/:service_id", (req, res) => {
+    console.log('261 hit')
+    const serviceId = req.params.service_id;
+    const { title, details } = req.body;
 
-//     const values = [
-//         req.body.m_id,
-//         req.body.u_id,
-//         req.body.title,
-//         req.body.details,
-//         req.body.img_URL,
-//         req.body.created_date,
-//     ]
+    const qUpdateService = "UPDATE services SET title = ?, details = ? WHERE s_id = ?";
+    db.query(qUpdateService, [title, details, serviceId], (err, result) => {
+        if (err) {
+            return res.json(err)
+        }
+        return res.json('Service updated successfully!');
+    });
+});
 
-//     db.query(q, [values], (err, data) => {
-//         if (err) return res.json(err)
-//         if (data) console.log('Memory added')
-//         return res.json('memories added successfully!')
-//     })
-// })
+// add service for doctor
+app.post("/services", (req, res) => {
+    const doctorId = req.params.dr_id;
+    const q = "INSERT INTO services (`dr_id`, `s_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
+
+    const values = [
+        req.body.dr_id,
+        req.body.s_id,
+        req.body.title,
+        req.body.details,
+        req.body.img_URL,
+        req.body.created_date,
+    ]
+
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Service added')
+        return res.json('service added successfully!')
+    })
+})
+
+// Add a new doctor to the service
+// app.post("/service/doctor/:service_id", (req, res) => {
+//     const serviceId = req.params.service_id;
+//     const { doctorId } = req.body;
+
+//     const qAddDoctor = "Add column ";
+//     db.query(qAddDoctor, [serviceId, doctorName], (errAddDoctor, resultAddDoctor) => {
+//         if (errAddDoctor) {
+//             return res.status(500).json({ error: errAddDoctor.message });
+//         }
+
+//         res.json('Doctor added to the service successfully!');
+//     });
+// });
+
+
+
+
+
 
 // // update memory
 // app.put("/memories/:id", (req, res) => {
