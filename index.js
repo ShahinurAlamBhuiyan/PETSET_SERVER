@@ -499,13 +499,12 @@ app.delete("/appointment/user/:id", (req, res) => {
 // ----------------------------------------------------------------------------
 
 
-// STORE QUERY ------------------------------------
+// STORE QUERY ------------------------------------------------------------------------
 // Get all product
 app.get('/products', (req, res) => {
     const q = 'SELECT * FROM petfoodmedistore';
-    const productType = req.query.product_type;
 
-    db.query(q, [productType], (err, data) => {
+    db.query(q, (err, data) => {
         if (err) return res.json(err);
         return res.json(data);
     });
@@ -591,6 +590,78 @@ app.delete("/product/:id", (req, res) => {
         if (err) return res.json(err)
         if (data) console.log('Product deleted.')
         return res.json('product deleted successfully!')
+    })
+})
+// ----------------------------------------------------------------------------
+
+// ORDER QUERY ----------------------------------------------------------------------
+
+// Get all order
+app.get('/orders', (req, res) => {
+    const q = 'SELECT * FROM foodmediorder';
+
+    db.query(q, (err, data) => {
+        if (err) return res.json(err);
+        return res.json(data);
+    });
+});
+
+// Get order by customer_id
+app.get("/order/customer/:id", (req, res) => {
+    const customerId = req.params.id;
+    const q = "SELECT * FROM foodmediorder WHERE customer_id = ?"
+    db.query(q, customerId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+// Update order status route
+app.put('/order/:orderId', (req, res) => {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    // Find the order by ID and update the status
+    const q = "UPDATE foodmediorder SET status = ? WHERE order_id = ?"
+    db.query(q, [status, orderId], (err, result) => {
+        if (err) return res.json(err);
+        return res.json('Status updated successfully!')
+    })
+
+});
+
+// Add order
+app.post("/order", (req, res) => {
+    const q = "INSERT INTO foodmediorder (`order_id`,`product_id`,`customer_id`,`payment_id`,  `orderer_name`, `orderer_email`, `orderer_contact`,  `order_date`, `shipping_address`, `status`) VALUES (?)"
+
+    const values = [
+        req.body.order_id,
+        req.body.product_id,
+        req.body.customer_id,
+        req.body.payment_id,
+        req.body.orderer_name,
+        req.body.orderer_email,
+        req.body.orderer_contact,
+        req.body.order_date,
+        req.body.shipping_address,
+        req.body.status,
+    ]
+
+    db.query(q, [values], (err, result) => {
+        if (err) return res.json(err)
+        return res.json('order added successfully!')
+    })
+})
+
+// delete order
+app.delete("/order/:id", (req, res) => {
+    const orderId = req.params.id;
+    const q = "DELETE FROM foodmediorder WHERE order_id = ?"
+
+    db.query(q, orderId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('order deleted.')
+        return res.json('order deleted successfully!')
     })
 })
 // ----------------------------------------------------------------------------
