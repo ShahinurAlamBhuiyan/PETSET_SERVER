@@ -263,8 +263,8 @@ app.get("/services/doctor/:id", (req, res) => {
     const doctorID = req.params.id;
     const q = "SELECT * FROM services WHERE dr_id = ?"
     db.query(q, doctorID, (err, data) => {
-        if (err)return res.json(err)
-        
+        if (err) return res.json(err)
+
         return res.json(data)
     })
 })
@@ -355,7 +355,7 @@ app.delete("/service/doctor/:id", (req, res) => {
 app.get("/doctors", (req, res) => {
     const q = 'SELECT * FROM animalspecialist'
     db.query(q, (err, result) => {
-        if(err) return res.json(err)
+        if (err) return res.json(err)
         return res.json(result)
     })
 })
@@ -408,9 +408,38 @@ app.delete("/doctor/:id", (req, res) => {
 
 
 // APPOINTMENT QUERY---------------------------------------------------------
+// Get all appointment
+app.get('/appointments', (req, res) => {
+    const q = 'SELECT * FROM appointment'
+    db.query(q, (err, results) => {
+        if (err) return res.json(err);
+        return res.json(results);
+    })
+})
+
+// Get appointment by doctor id
+app.get('/appointments/doctor/:id', (req, res) => {
+    const doctorId = req.params.id;
+    const q = "SELECT * FROM appointment WHERE dr_id = ?";
+    db.query(q, doctorId, (err, res) => {
+        if (err) return res.json(err);
+        return res.json(results);
+    })
+})
+
+// Get appointment by u_id
+app.get('/appointments/user/:id', (req, res) => {
+    const userId = req.params.id;
+    const q = "SELECT * FROM appointment WHERE u_id = ?";
+    db.query(q, userId, (err, res) => {
+        if (err) return res.json(err);
+        return res.json(results);
+    })
+})
+
 // book appointment
 app.post('/appointment', (req, res) => {
-    const q = "INSERT INTO appointment (`u_id`, `dr_id`, `a_id`, `appointment_date`, `s_id`, `owner_name`, `owner_email`, `contact`, `fees`) VALUES (?)"
+    const q = "INSERT INTO appointment (`u_id`, `dr_id`, `a_id`, `appointment_date`, `s_id`,`service_name`, `owner_name`, `owner_email`, `contact`, `fees`) VALUES (?)"
 
     const values = [
         req.body.u_id,
@@ -418,10 +447,11 @@ app.post('/appointment', (req, res) => {
         req.body.a_id,
         req.body.appointment_date,
         req.body.s_id,
+        req.body.service_name,
         req.body.owner_name,
         req.body.owner_email,
         req.body.contact,
-        req.body.fee
+        req.body.fee,
     ]
 
     db.query(q, [values], (err, data) => {
@@ -431,15 +461,27 @@ app.post('/appointment', (req, res) => {
     })
 })
 
-// delete appointment by doctor id
+// delete appointment by appointment id
 app.delete("/appointment/:id", (req, res) => {
+    const appointmentId = req.params.id;
+    const q = "DELETE FROM appointment WHERE a_id = ?"
+
+    db.query(q, appointmentId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Appointment deleted.')
+        return res.json('appointment deleted successfully!')
+    })
+})
+
+// delete appointment by doctor id
+app.delete("/appointment/doctor/:id", (req, res) => {
     const doctorId = req.params.id;
     const q = "DELETE FROM appointment WHERE dr_id = ?"
 
     db.query(q, doctorId, (err, data) => {
         if (err) return res.json(err)
-        if (data) console.log('Doctor deleted.')
-        return res.json('doctor deleted successfully!')
+        if (data) console.log('Appointment deleted.')
+        return res.json('appointment deleted successfully!')
     })
 })
 
@@ -535,7 +577,7 @@ app.put("/product/:product_id", (req, res) => {
     const q = "UPDATE petfoodmedistore SET product_name = ?, product_price = ?, product_description = ? WHERE product_id = ?";
     db.query(q, [product_name, product_price, product_description, productId], (err, result) => {
         if (err) return res.json(err)
-        
+
         return res.json('product updated successfully!');
     });
 });
