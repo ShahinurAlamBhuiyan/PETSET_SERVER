@@ -234,7 +234,7 @@ app.get("/service/:id", (req, res) => {
 // get service and doctor by id
 app.get("/services/:id", (req, res) => {
     const serviceID = req.params.id;
-    const q = "SELECT services.s_id, services.title, services.details,animalspecialist.dr_id, animalspecialist.dr_name, animalspecialist.dr_email, animalspecialist.dr_contact, animalspecialist.specialise, animalspecialist.experience_yr, animalspecialist.visiting_fees, animalspecialist.dr_address FROM services JOIN animalspecialist ON services.dr_id = animalspecialist.dr_id WHERE services.s_id = ?"
+    const q = "SELECT services.s_id, services.title, services.details,services.created_date, services.img_URL,animalspecialist.dr_id, animalspecialist.dr_name, animalspecialist.dr_email, animalspecialist.dr_contact, animalspecialist.specialise, animalspecialist.experience_yr, animalspecialist.visiting_fees, animalspecialist.dr_address FROM services JOIN animalspecialist ON services.dr_id = animalspecialist.dr_id WHERE services.s_id = ?"
     // const q = "SELECT * FROM services WHERE m_id = ?"
     db.query(q, serviceID, (err, data) => {
         if (err) {
@@ -274,7 +274,6 @@ app.put("/services/:service_id", (req, res) => {
 
 // add service for doctor
 app.post("/services", (req, res) => {
-    const doctorId = req.params.dr_id;
     const q = "INSERT INTO services (`dr_id`, `s_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
 
     const values = [
@@ -293,44 +292,7 @@ app.post("/services", (req, res) => {
     })
 })
 
-// Add a new doctor to the service
-// app.post("/service/doctor/:service_id", (req, res) => {
-//     const serviceId = req.params.service_id;
-//     const { doctorId } = req.body;
 
-//     const qAddDoctor = "Add column ";
-//     db.query(qAddDoctor, [serviceId, doctorName], (errAddDoctor, resultAddDoctor) => {
-//         if (errAddDoctor) {
-//             return res.status(500).json({ error: errAddDoctor.message });
-//         }
-
-//         res.json('Doctor added to the service successfully!');
-//     });
-// });
-
-
-
-
-
-
-// // update memory
-// app.put("/memories/:id", (req, res) => {
-//     const memoryId = req.params.id;
-//     const q = "UPDATE books SET `title`=?, `details`=?, `img_url`=?, `created_date`= ? WHERE id = ?";
-
-//     const values = [
-//         req.body.title,
-//         req.body.details,
-//         req.body.img_URL,
-//         req.body.created_date,
-//     ]
-
-//     db.query(q, [...values, memoryId], (err, data) => {
-//         if (err) return res.json(err)
-//         if (data) console.log('Memory Updated.')
-//         return res.json('memories updated successfully!')
-//     })
-// })
 // ----------------------------------------------------------------------------
 // ----------------------------------------------------------------------------
 
