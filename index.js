@@ -45,10 +45,7 @@ app.delete('/user/:id', async (req, res) => {
         return res.json('user deleted!')
     })
 })
-
-
-
-// -----------------------------------------------------------
+// -------------------------------------------------------------
 
 // QUERY FOR  AUTHENTICATION ---------------------------------------
 // sign-up
@@ -210,6 +207,9 @@ app.put("/memories/:id", (req, res) => {
 })
 // ---------------------------------------------------------------------------
 
+
+
+
 // QUERY FOR SERVICES --------------------------------------------------------
 // get all
 app.get("/services", (req, res) => {
@@ -245,33 +245,6 @@ app.get("/services/:id", (req, res) => {
     })
 })
 
-// delete service
-app.delete("/service/:id", (req, res) => {
-    const serviceId = req.params.id;
-    const q = "DELETE FROM services WHERE s_id = ?"
-
-    db.query(q, serviceId, (err, data) => {
-        if (err) return res.json(err)
-        if (data) console.log('service deleted.')
-        return res.json('service deleted successfully!')
-    })
-})
-
-// Update service title, details
-app.put("/services/:service_id", (req, res) => {
-    console.log('261 hit')
-    const serviceId = req.params.service_id;
-    const { title, details } = req.body;
-
-    const qUpdateService = "UPDATE services SET title = ?, details = ? WHERE s_id = ?";
-    db.query(qUpdateService, [title, details, serviceId], (err, result) => {
-        if (err) {
-            return res.json(err)
-        }
-        return res.json('Service updated successfully!');
-    });
-});
-
 // add service for doctor
 app.post("/services", (req, res) => {
     const q = "INSERT INTO services (`dr_id`, `s_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
@@ -292,19 +265,30 @@ app.post("/services", (req, res) => {
     })
 })
 
+// Update service title, details
+app.put("/services/:service_id", (req, res) => {
+    console.log('261 hit')
+    const serviceId = req.params.service_id;
+    const { title, details } = req.body;
 
-// ----------------------------------------------------------------------------
-// ----------------------------------------------------------------------------
+    const qUpdateService = "UPDATE services SET title = ?, details = ? WHERE s_id = ?";
+    db.query(qUpdateService, [title, details, serviceId], (err, result) => {
+        if (err) {
+            return res.json(err)
+        }
+        return res.json('Service updated successfully!');
+    });
+});
 
+// delete service
+app.delete("/service/:id", (req, res) => {
+    const serviceId = req.params.id;
+    const q = "DELETE FROM services WHERE s_id = ?"
 
-// DOCTOR APPOINTMENT
-// get doctor
-app.get("/doctor/:id", (req, res) => {
-    const doctorId = req.params.id;
-    const q = "SELECT * FROM animalspecialist WHERE dr_id = ?"
-    db.query(q, doctorId, (err, data) => {
+    db.query(q, serviceId, (err, data) => {
         if (err) return res.json(err)
-        return res.json(data)
+        if (data) console.log('service deleted.')
+        return res.json('service deleted successfully!')
     })
 })
 
@@ -326,9 +310,24 @@ app.delete("/service/doctor/:service_id/:dr_id", (req, res) => {
     });
 });
 
+// ----------------------------------------------------------------------------
 
 
 
+// DOCTOR  QUERY ----------------------------------------------------
+// get doctor
+app.get("/doctor/:id", (req, res) => {
+    const doctorId = req.params.id;
+    const q = "SELECT * FROM animalspecialist WHERE dr_id = ?"
+    db.query(q, doctorId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+// ----------------------------------------------------------------------------
+
+
+// APPOINTMENT QUERY---------------------------------------------------------
 // book appointment
 app.post('/appointment', (req, res) => {
     const q = "INSERT INTO appointment (`u_id`, `dr_id`, `a_id`, `appointment_date`, `s_id`, `owner_name`, `owner_email`, `contact`, `fees`) VALUES (?)"
@@ -351,9 +350,20 @@ app.post('/appointment', (req, res) => {
         return res.json('Appointment added successfully!')
     })
 })
+// ----------------------------------------------------------------------------
 
 
 // STORE QUERY ------------------------------------
+// Get all product
+app.get('/products', (req, res) => {
+    const q = 'SELECT * FROM petfoodmedistore';
+    const productType = req.query.product_type;
+
+    db.query(q, [productType], (err, data) => {
+        if (err) return res.json(err);
+        return res.json(data);
+    });
+});
 // Get product by type name
 app.get('/product', (req, res) => {
     const q = 'SELECT * FROM petfoodmedistore WHERE product_type = ?';
@@ -375,6 +385,18 @@ app.get("/product/:id", (req, res) => {
     })
 })
 
+// Update product by id
+app.put("/product/:product_id", (req, res) => {
+    const productId = req.params.product_id;
+    const { product_name, product_price, product_description } = req.body;
+
+    const q = "UPDATE petfoodmedistore SET product_name = ?, product_price = ?, product_description = ? WHERE product_id = ?";
+    db.query(q, [product_name, product_price, product_description, productId], (err, result) => {
+        if (err) return res.json(err)
+        
+        return res.json('product updated successfully!');
+    });
+});
 
 // SEARCH PRODUCT
 app.get('/search', (req, res) => {
@@ -392,7 +414,7 @@ app.get('/search', (req, res) => {
         return res.json(results);
     });
 });
-
+// ----------------------------------------------------------------------------
 
 app.listen(8800, () => {
     console.log('Connect to backend !')
