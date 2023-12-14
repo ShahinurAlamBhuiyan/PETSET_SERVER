@@ -421,7 +421,7 @@ app.get('/appointments', (req, res) => {
 app.get('/appointments/doctor/:id', (req, res) => {
     const doctorId = req.params.id;
     const q = "SELECT * FROM appointment WHERE dr_id = ?";
-    db.query(q, doctorId, (err, res) => {
+    db.query(q, doctorId, (err, results) => {
         if (err) return res.json(err);
         return res.json(results);
     })
@@ -431,7 +431,7 @@ app.get('/appointments/doctor/:id', (req, res) => {
 app.get('/appointments/user/:id', (req, res) => {
     const userId = req.params.id;
     const q = "SELECT * FROM appointment WHERE u_id = ?";
-    db.query(q, userId, (err, res) => {
+    db.query(q, userId, (err, results) => {
         if (err) return res.json(err);
         return res.json(results);
     })
