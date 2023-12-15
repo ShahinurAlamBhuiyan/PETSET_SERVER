@@ -47,6 +47,24 @@ app.delete('/user/:id', async (req, res) => {
         return res.json('user deleted!')
     })
 })
+
+// update user
+app.put("/user/:id", (req, res) => {
+    const userId = req.params.id;
+    const q = "UPDATE user SET `full_name`=?, `email`=?, `image_URL`=? WHERE u_id = ?";
+
+    const values = [
+        req.body.full_name,
+        req.body.email,
+        req.body.image_URL,
+    ]
+
+    db.query(q, [...values, userId], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('user data Updated.')
+        return res.json('user updated successfully!')
+    })
+})
 // -------------------------------------------------------------
 
 // QUERY FOR  AUTHENTICATION ---------------------------------------
