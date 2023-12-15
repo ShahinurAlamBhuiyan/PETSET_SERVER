@@ -159,6 +159,18 @@ app.get("/memories/:id", (req, res) => {
         return res.json(data)
     })
 })
+
+// get memory by user id
+app.get("/memories/user/:id", (req, res) => {
+    const userId = req.params.id;
+    const q = "SELECT * FROM memories WHERE u_id = ?"
+    db.query(q, userId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+
 // add memory
 app.post("/memories", (req, res) => {
     const q = "INSERT INTO memories (`m_id`, `u_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
@@ -203,13 +215,12 @@ app.delete("/memories/user/:id", (req, res) => {
 // update memory
 app.put("/memories/:id", (req, res) => {
     const memoryId = req.params.id;
-    const q = "UPDATE books SET `title`=?, `details`=?, `img_url`=?, `created_date`= ? WHERE id = ?";
+    const q = "UPDATE memories SET `title`=?, `details`=?, `img_URL`=? WHERE m_id = ?";
 
     const values = [
         req.body.title,
         req.body.details,
         req.body.img_URL,
-        req.body.created_date,
     ]
 
     db.query(q, [...values, memoryId], (err, data) => {
