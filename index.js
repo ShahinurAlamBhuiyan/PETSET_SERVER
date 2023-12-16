@@ -255,7 +255,7 @@ app.put("/memories/:id", (req, res) => {
 // QUERY FOR SERVICES --------------------------------------------------------
 // get all
 app.get("/services", (req, res) => {
-    const q = "SELECT DISTINCT s_id, title, details FROM services"
+    const q = "SELECT DISTINCT s_id, title, details, img_URL FROM services"
     db.query(q, (err, data) => {
         if (err) return res.json(err)
         // console.log(first)
