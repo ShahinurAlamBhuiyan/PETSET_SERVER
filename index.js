@@ -706,11 +706,21 @@ app.get("/adaptions", (req, res) => {
     })
 })
 
-// get adaption by id
+// get adaption by adoption id
 app.get("/adaption/:id", (req, res) => {
     const adaptionId = req.params.id;
     const q = "SELECT * FROM adaptationpost WHERE a_id = ?"
     db.query(q, adaptionId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+// get adaption by user id
+app.get("/adaption/user/:id", (req, res) => {
+    const userId = req.params.id;
+    const q = "SELECT * FROM adaptationpost WHERE u_id = ?"
+    db.query(q, userId, (err, data) => {
         if (err) return res.json(err)
         return res.json(data)
     })
@@ -738,6 +748,38 @@ app.post("/adaption", (req, res) => {
     })
 })
 
+// delete adaption by a_id
+app.delete("/adoption/:id", (req, res) => {
+    const adoptionId = req.params.id;
+    const q = "DELETE FROM adaptationpost WHERE a_id = ?"
+
+    db.query(q, adoptionId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Adoption deleted.')
+        return res.json('adoption post deleted successfully!')
+    })
+})
+
+// update adoption
+app.put("/adoption/:id", (req, res) => {
+    const memoryId = req.params.id;
+    const q = "UPDATE adaptationpost SET `title`=?, `details`=? WHERE a_id = ?";
+
+    const values = [
+        req.body.title,
+        req.body.details,
+    ]
+
+    db.query(q, [...values, memoryId], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Adoption post Updated.')
+        return res.json('adoption post updated successfully!')
+    })
+})
+
+
+
+// ---------------------------------------
 // Get adoption comment with adoption_id
 // get adaption by id
 app.get("/adoption/comments/:id", (req, res) => {
