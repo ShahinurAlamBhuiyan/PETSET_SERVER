@@ -349,19 +349,28 @@ app.delete("/service/:id", (req, res) => {
 app.delete("/service/doctor/:service_id/:dr_id", (req, res) => {
     const serviceId = req.params.service_id;
     const doctorId = req.params.dr_id;
+
     // Delete from appointment table first
     const qDeleteAppointments = "DELETE FROM appointment WHERE s_id = ? AND dr_id = ?";
     db.query(qDeleteAppointments, [serviceId, doctorId], (err, result) => {
-        if (result) {
-            // Now, delete from services table
-            const qDeleteService = "DELETE FROM services WHERE s_id = ? AND dr_id = ?";
-            db.query(qDeleteService, [serviceId, doctorId], (err, results) => {
-                if (err) return res.json(err)
-                return res.json(results)
-            });
+        if (err) {
+            // Handle error from the first query
+            return res.json(err);
         }
+
+        // Now, delete from services table
+        const qDeleteService = "DELETE FROM services WHERE s_id = ? AND dr_id = ?";
+        db.query(qDeleteService, [serviceId, doctorId], (err, results) => {
+            if (err) {
+                // Handle error from the second query
+                return res.json(err);
+            }
+
+            return res.json(results);
+        });
     });
 });
+
 
 // Delete doctor by dr.id
 app.delete("/service/doctor/:id", (req, res) => {
@@ -613,14 +622,29 @@ app.put("/product/:product_id", (req, res) => {
 // delete product
 app.delete("/product/:id", (req, res) => {
     const productId = req.params.id;
-    const q = "DELETE FROM petfoodmedistore WHERE product_id = ?"
 
-    db.query(q, productId, (err, data) => {
-        if (err) return res.json(err)
-        if (data) console.log('Product deleted.')
-        return res.json('product deleted successfully!')
-    })
-})
+    // Delete from the dependent table first
+    const qDeleteOrders = "DELETE FROM foodmediorder WHERE product_id = ?";
+    db.query(qDeleteOrders, productId, (err, orderResult) => {
+        if (err) {
+            // Handle error from the first query
+            return res.json(err);
+        }
+
+        // Now, delete from the main table
+        const qDeleteProduct = "DELETE FROM petfoodmedistore WHERE product_id = ?";
+        db.query(qDeleteProduct, productId, (err, productResult) => {
+            if (err) {
+                // Handle error from the second query
+                return res.json(err);
+            }
+
+            console.log('Product deleted.');
+            return res.json('Product deleted successfully!');
+        });
+    });
+});
+
 // ----------------------------------------------------------------------------
 
 // ORDER QUERY ----------------------------------------------------------------------
@@ -682,12 +706,24 @@ app.post("/order", (req, res) => {
     })
 })
 
-// delete order
+// delete order by orderId
 app.delete("/order/:id", (req, res) => {
     const orderId = req.params.id;
     const q = "DELETE FROM foodmediorder WHERE order_id = ?"
 
     db.query(q, orderId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('order deleted.')
+        return res.json('order deleted successfully!')
+    })
+})
+
+// delete order by userId
+app.delete("/order/user/:id", (req, res) => {
+    const customerId = req.params.id;
+    const q = "DELETE FROM foodmediorder WHERE customer_id = ?"
+
+    db.query(q, customerId, (err, data) => {
         if (err) return res.json(err)
         if (data) console.log('order deleted.')
         return res.json('order deleted successfully!')
@@ -760,9 +796,21 @@ app.delete("/adoption/:id", (req, res) => {
     })
 })
 
+// delete adaption by u_id
+app.delete("/adoption/user/:id", (req, res) => {
+    const userId = req.params.id;
+    const q = "DELETE FROM adaptationpost WHERE u_id = ?"
+
+    db.query(q, userId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Adoption deleted.')
+        return res.json('adoption post deleted successfully!')
+    })
+})
+
 // update adoption
 app.put("/adoption/:id", (req, res) => {
-    const memoryId = req.params.id;
+    const adoptionId = req.params.id;
     const q = "UPDATE adaptationpost SET `title`=?, `details`=? WHERE a_id = ?";
 
     const values = [
@@ -770,7 +818,7 @@ app.put("/adoption/:id", (req, res) => {
         req.body.details,
     ]
 
-    db.query(q, [...values, memoryId], (err, data) => {
+    db.query(q, [...values, adoptionId], (err, data) => {
         if (err) return res.json(err)
         if (data) console.log('Adoption post Updated.')
         return res.json('adoption post updated successfully!')
@@ -781,13 +829,25 @@ app.put("/adoption/:id", (req, res) => {
 
 // ---------------------------------------
 // Get adoption comment with adoption_id
-// get adaption by id
+// get adaption comment by id
 app.get("/adoption/comments/:id", (req, res) => {
     const adaptionId = req.params.id;
     const q = "SELECT * FROM adaptionComments WHERE a_id = ?"
     db.query(q, adaptionId, (err, data) => {
         if (err) return res.json(err)
         return res.json(data)
+    })
+})
+
+// delete adoption comment by userId
+app.delete("/adoption/comments/:id", (req, res) => {
+    const userId = req.params.id;
+    const q = "DELETE FROM adaptionComments WHERE u_id = ?"
+
+    db.query(q, userId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Adoption comment deleted.')
+        return res.json('adoption comment post deleted successfully!')
     })
 })
 
