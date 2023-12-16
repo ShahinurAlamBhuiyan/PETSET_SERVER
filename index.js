@@ -160,7 +160,7 @@ app.post('/sign-in', async (req, res) => {
 
 
 // QUERY FOR MEMORIES --------------------------------------------------------
-// get all
+// get all memory
 app.get("/memories", (req, res) => {
     const q = "SELECT * FROM memories"
     db.query(q, (err, data) => {
@@ -693,6 +693,83 @@ app.delete("/order/:id", (req, res) => {
         return res.json('order deleted successfully!')
     })
 })
+// ----------------------------------------------------------------------------
+
+
+// QUERY FOR ADAPTION --------------------------------------------------------
+// get all adaption post
+app.get("/adaptions", (req, res) => {
+    const q = "SELECT * FROM adaptationpost"
+    db.query(q, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+// get adaption by id
+app.get("/adaption/:id", (req, res) => {
+    const adaptionId = req.params.id;
+    const q = "SELECT * FROM adaptationpost WHERE a_id = ?"
+    db.query(q, adaptionId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+// add adaption post
+app.post("/adaption", (req, res) => {
+    const q = "INSERT INTO adaptationpost (`a_id`, `u_id`, `title`, `details`, `img_URL`, `img_URL2`, `img_URL3`, `created_date`) VALUES (?)"
+
+    const values = [
+        req.body.a_id,
+        req.body.u_id,
+        req.body.title,
+        req.body.details,
+        req.body.img_URL,
+        req.body.img_URL2,
+        req.body.img_URL3,
+        req.body.created_date,
+    ]
+
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Adaption post added')
+        return res.json('adaption post added successfully!')
+    })
+})
+
+// Get adoption comment with adoption_id
+// get adaption by id
+app.get("/adoption/comments/:id", (req, res) => {
+    const adaptionId = req.params.id;
+    const q = "SELECT * FROM adaptionComments WHERE a_id = ?"
+    db.query(q, adaptionId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+// add adaption comment
+app.post("/comment", (req, res) => {
+    const q = "INSERT INTO adaptionComments (`c_id`, `a_id`, `u_id`, `c_name`, `c_img_URL`, `c_body`, `c_date`) VALUES (?)"
+
+    const values = [
+        req.body.c_id,
+        req.body.a_id,
+        req.body.u_id,
+        req.body.c_name,
+        req.body.c_img_URL,
+        req.body.c_body,
+        req.body.c_date,
+    ]
+
+    db.query(q, [values], (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('Adaption post added')
+        return res.json('adaption post added successfully!')
+    })
+})
+
 // ----------------------------------------------------------------------------
 
 app.listen(8800, () => {
