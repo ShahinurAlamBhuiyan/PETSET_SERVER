@@ -276,7 +276,7 @@ app.get("/service/:id", (req, res) => {
 // get service and doctor by id
 app.get("/services/:id", (req, res) => {
     const serviceID = req.params.id;
-    const q = "SELECT services.s_id, services.title, services.details,services.created_date, services.img_URL,animalspecialist.dr_id, animalspecialist.dr_name, animalspecialist.dr_email, animalspecialist.dr_contact, animalspecialist.specialise, animalspecialist.experience_yr, animalspecialist.visiting_fees, animalspecialist.dr_address FROM services JOIN animalspecialist ON services.dr_id = animalspecialist.dr_id WHERE services.s_id = ?"
+    const q = "SELECT services.s_id, services.title, services.details,services.created_date, services.img_URL,animalspecialist.dr_id, animalspecialist.dr_name, animalspecialist.dr_email, animalspecialist.dr_contact, animalspecialist.specialise, animalspecialist.img_URL as dr_img, animalspecialist.experience_yr, animalspecialist.visiting_fees, animalspecialist.dr_address FROM services JOIN animalspecialist ON services.dr_id = animalspecialist.dr_id WHERE services.s_id = ?"
     // const q = "SELECT * FROM services WHERE m_id = ?"
     db.query(q, serviceID, (err, data) => {
         if (err) {
@@ -345,7 +345,7 @@ app.delete("/service/:id", (req, res) => {
     })
 })
 
-// Delete doctor from service
+// Delete doctor from service subquery
 app.delete("/service/doctor/:service_id/:dr_id", (req, res) => {
     const serviceId = req.params.service_id;
     const doctorId = req.params.dr_id;
