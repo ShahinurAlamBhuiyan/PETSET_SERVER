@@ -11,12 +11,15 @@ const app = express()
 app.use(express.json());
 app.use(cors())
 
-const db = mysql.createConnection({
-    host: `${process.env.db_host}`,
-    user: `${process.env.db_user}`,
-    password: `${process.env.db_pass}`,
-    database: `${process.env.db_name}`
-})
+const connectionURI = `${process.env.db_connect}`
+const db = mysql.createConnection(connectionURI);
+db.connect((err) => {
+    if (err) {
+        console.error('Error connecting to the database:', err.stack);
+        return;
+    }
+    console.log('Connected to the database as id', db.threadId);
+});
 
 app.use(express.json())
 
