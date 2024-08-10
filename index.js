@@ -188,7 +188,6 @@ app.get("/memories/user/:id", (req, res) => {
     })
 })
 
-
 // add memory
 app.post("/memories", (req, res) => {
     const q = "INSERT INTO memories (`m_id`, `u_id`, `title`, `details`, `img_URL`, `created_date`) VALUES (?)"
