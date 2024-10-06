@@ -11,7 +11,9 @@ const app = express()
 app.use(express.json());
 app.use(cors())
 
-const connectionURI = `${process.env.db_connect}`
+// const connectionURI = `${process.env.db_connect}`
+const connectionURI = `mysql://${process.env.db_user}:${process.env.db_pass}@${process.env.db_host}/${process.env.db_name}`;
+
 const db = mysql.createConnection(connectionURI);
 db.connect((err) => {
     if (err) {
@@ -322,7 +324,6 @@ app.post("/services", (req, res) => {
 
 // Update service title, details
 app.put("/services/:service_id", (req, res) => {
-    console.log('261 hit')
     const serviceId = req.params.service_id;
     const { title, details } = req.body;
 
