@@ -735,6 +735,48 @@ app.delete("/order/user/:id", (req, res) => {
 // ----------------------------------------------------------------------------
 
 
+
+// QUERY FOR HOSTEL -----------------------------
+// Add hostel Order
+app.post("/hostel-order", (req, res) => {
+    const q = `
+        INSERT INTO hostel_orders (
+            order_id, customer_id, payment_id, orderer_name, 
+            orderer_email, orderer_contact, order_date, 
+            shipping_address, pet_type, guests, check_in, 
+            check_out, total_price
+        ) VALUES (?)
+    `;
+
+    const values = [
+        req.body.order_id,
+        req.body.customer_id,
+        req.body.payment_id,
+        req.body.orderer_name,
+        req.body.orderer_email,
+        req.body.orderer_contact,
+        req.body.order_date,
+        req.body.shipping_address,
+        req.body.orderData.petType,
+        req.body.orderData.guests,
+        req.body.orderData.checkIn,
+        req.body.orderData.checkOut,
+        req.body.orderData.totalPrice
+    ];
+
+    db.query(q, [values], (err, result) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        return res.status(200).json({ message: 'Hostel order added successfully!' });
+    });
+});
+
+
+
+// ---------------------------------------------------------------------------
+
+
 // QUERY FOR ADAPTION --------------------------------------------------------
 // get all adaption post
 app.get("/adaptions", (req, res) => {
