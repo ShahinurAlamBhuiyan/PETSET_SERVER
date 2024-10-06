@@ -736,6 +736,9 @@ app.delete("/order/user/:id", (req, res) => {
 
 
 
+
+
+
 // QUERY FOR HOSTEL -----------------------------
 // Add hostel Order
 app.post("/hostel-order", (req, res) => {
@@ -771,6 +774,38 @@ app.post("/hostel-order", (req, res) => {
         return res.status(200).json({ message: 'Hostel order added successfully!' });
     });
 });
+
+// Get hostel-orders by customer_id
+app.get("/hostel-order/customer/:id", (req, res) => {
+    const customerId = req.params.id;
+    const q = "SELECT * FROM hostel_orders WHERE customer_id = ?"
+    db.query(q, customerId, (err, data) => {
+        if (err) return res.json(err)
+        return res.json(data)
+    })
+})
+
+// Get all order for admin
+app.get('/hostel-orders', (req, res) => {
+    const q = 'SELECT * FROM hostel_orders';
+
+    db.query(q, (err, data) => {
+        if (err) return res.json(err);
+        return res.json(data);
+    });
+});
+
+// delete order by orderId
+app.delete("/hostel-order/:id", (req, res) => {
+    const orderId = req.params.id;
+    const q = "DELETE FROM hostel_orders WHERE order_id = ?"
+
+    db.query(q, orderId, (err, data) => {
+        if (err) return res.json(err)
+        if (data) console.log('order deleted.')
+        return res.json('order deleted successfully!')
+    })
+})
 
 
 
